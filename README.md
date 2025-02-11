@@ -20,13 +20,13 @@ source venv/bin/activate  # On macOS/Linux
 venv\Scripts\activate  # On Windows
 ```
 
-###3. Install Dependencies
+### 3. Install Dependencies
 Run the following command to install required packages:
 ```bash
 pip install -r requirements.txt
 ```
 
-###4. Setup Your API Token
+### 4. Setup Your API Token
 This project uses dotenv to securely load your API token.
 
 1. Create a .env file in the project directory.
