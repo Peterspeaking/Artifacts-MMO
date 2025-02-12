@@ -1,15 +1,17 @@
 import requests
 import os
 from dotenv import load_dotenv
+from core.errors import handle_api_error
 
 load_dotenv()
 
 class ArtifactAPI:
     BASE_URL = "https://api.artifactsmmo.com"
 
-    def __init__(self, character: str):
+    def __init__(self, engine, character: str):
         self.token =  os.getenv("TOKEN")
         self.character = character
+        self.engine = engine
         self.headers = {
             "Content-Type": "application/json",
             "Accept": "application/json",
@@ -17,9 +19,6 @@ class ArtifactAPI:
         }
     
     def _get(self, data: dict = None):
-        """
-        Internal helper method to GET character data.
-        """
         url = f"{self.BASE_URL}/my/{self.character}"
         try:
             response = requests.get(url, headers=self.headers, json=data)
@@ -29,17 +28,19 @@ class ArtifactAPI:
             return None
 
     def _post(self, endpoint: str, data: dict = None):
-        """
-        Internal helper method to POST to a given endpoint.
-        """
         url = f"{self.BASE_URL}/my/{self.character}/action/{endpoint}"
-        print(url)
         try:
             response = requests.post(url, headers=self.headers, json=data)
             response.raise_for_status()
             return response.json().get("data")
         except requests.exceptions.RequestException as error:
-            print(f"Error calling endpoint '{endpoint}': {error}")
+            if response is not None and response.status_code >= 400:
+                error_data = response.json().get("error", {})
+                error_code = error_data.get("code", response.status_code)
+                error_message = error_data.get("message", "Unknown error")
+                return handle_api_error(self.engine.logger, error_code, error_message)
+
+            self.engine.logger.error(f"Network error: {error}")
             return None
 
     def fight(self):
