@@ -15,6 +15,18 @@ class ArtifactAPI:
             "Accept": "application/json",
             "Authorization": f"Bearer {self.token}",
         }
+    
+    def _get(self, data: dict = None):
+        """
+        Internal helper method to GET character data.
+        """
+        url = f"{self.BASE_URL}/my/{self.character}"
+        try:
+            response = requests.get(url, headers=self.headers, json=data)
+            response.raise_for_status()
+            return response.json().get("data")
+        except requests.exceptions.RequestException as error:
+            return None
 
     def _post(self, endpoint: str, data: dict = None):
         """
@@ -57,3 +69,11 @@ class ArtifactAPI:
     def crafting(self, code: str, quantity: int):
         """Call the crafting endpoint with code and quantity to craft."""
         return self._post("crafting", data={"code": code, "quantity": quantity})
+    
+    def deposit(self, code: str, quantity: int):
+        """Call the deposit endpoint with code and quantity to deposit."""
+        return self._post("bank/deposit", data={"code": code, "quantity": quantity})
+    
+    def get_inventory(self):
+        """Get the character's inventory."""
+        return self._get()
