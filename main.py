@@ -17,8 +17,8 @@ def fighting_loop(character: str):
 if __name__ == "__main__":
     configure_logging()
 
-    crafting_characters = ["MrSpeak", "Honeycomb", "POSTmaster", "Miss200OK", "404"]
-    fighting_characters = []
+    crafting_characters = ["Honeycomb", "POSTmaster", "Miss200OK", "404"]
+    fighting_characters = ["MrSpeak"]
 
     threads = []
     for char in crafting_characters:
